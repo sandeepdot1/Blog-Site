@@ -1,0 +1,14 @@
+{
+  "Parameters":
+  {
+    "local_uri":"mysql://root:@127.0.0.1/CodeBlog",
+    "production_uri":"mysql://root:@localhost/CodeBlog",
+    "blog_name": "CodingBlog",
+    "no_of_blogs": 2,
+    "login_image": "signin.png",
+    "admin_user": "Sandeep",
+    "admin_password": "icreatedthissite",
+    "upload_location": "/home/sandeep/Desktop/flask_app/",
+    "per_page": 3
+  }
+}
