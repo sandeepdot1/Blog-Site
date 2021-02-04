@@ -2,7 +2,7 @@
   "Parameters":
   {
     "local_uri":"mysql://root:@127.0.0.1/CodeBlog",
-    "production_uri":"mysql://root:@localhost/CodeBlog",
+    "production_uri":"mysql://root:@127.0.0.1/CodeBlog",
     "blog_name": "CodingBlog",
     "no_of_blogs": 2,
     "login_image": "signin.png",
