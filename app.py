@@ -7,7 +7,7 @@ import json
 with open('config.json', 'r') as config:
     params = json.load(config)['Parameters']
 
-local_server = True
+local_server = False
 app = Flask(__name__)
 app.secret_key = 'my secret key'
 
