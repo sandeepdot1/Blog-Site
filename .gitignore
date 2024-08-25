@@ -1,0 +1,7 @@
+# files/directories which are not tracked in git
+# are added in .gitignore file
+
+venv
+.idea
+
+config.json
