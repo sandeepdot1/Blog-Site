@@ -156,6 +156,8 @@ def add():
             db.session.add(blog)
             db.session.commit()
         return render_template('add.html',params=params)
+    else:
+        return redirect('/dashboard')
 
 
 @app.route('/logout')
