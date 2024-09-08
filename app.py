@@ -13,6 +13,10 @@ app.secret_key = 'my secret key'
 
 if local_server:
     app.config['SQLALCHEMY_DATABASE_URI'] = params['local_uri']
+
+    # sesion name changed for testing
+    app.config['SESSION_COOKIE_NAME'] = "session_details"
+
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = params['production_uri']
 
@@ -42,6 +46,17 @@ class Blogs(db.Model):
     content = db.Column(db.String(120), nullable=False)
     img_file = db.Column(db.String(25), nullable=False)
     date = db.Column(db.String(12), nullable=True)
+
+class Users(db.Model):
+    '''
+    id, email, username, password
+    '''
+    id = db.Column(db.Integer, primary_key=True)  # Auto-incrementing ID
+    email = db.Column(db.String(120), nullable=False, unique=True)  # Email as a string, must be unique
+    username = db.Column(db.String(50), nullable=False, unique=True)  # Username as a string, must be unique
+    password = db.Column(db.String(200), nullable=False)  # Password as a string
+    created_date = db.Column(db.String(12), nullable=True)
+
 
 
 @app.route("/", methods=["GET"])
@@ -102,25 +117,16 @@ def blog(blog_slug):
 
 @app.route('/dashboard', methods=["GET", "POST"])
 def dashboard():
-    if 'user' in session and session['user'] == params['admin_user']:
+    if 'user' in session:
         blogs = Blogs.query.all()
         return render_template('dashboard.html', params=params, blogs=blogs)
-    if request.method == 'POST':
-        username = request.form.get('name')
-        password = request.form.get('password')
-        if username == params['admin_user'] and password == params['admin_password']:
-            session['user'] = username
-            blogs = Blogs.query.all()
-            return render_template('dashboard.html', params=params, blogs=blogs)
-        else:
-            return render_template('login.html', params=params)
     else:
-        return render_template('login.html', params=params)
+        return redirect('/')
 
 
 @app.route('/edit/<string:serialnum>', methods=["GET", "POST"])
 def edit(serialnum):
-    if 'user' in session and session['user'] == params['admin_user']:
+    if 'user' in session:
         if request.method == 'POST':
             title = request.form.get('title')
             slug = request.form.get('slug')
@@ -142,9 +148,10 @@ def edit(serialnum):
         blog = Blogs.query.filter_by(sno=serialnum).first()
         return render_template('edit.html', params=params, blog=blog)
 
+
 @app.route('/add',methods=["GET", "POST"])
 def add():
-    if 'user' in session and session['user'] == params['admin_user']:
+    if 'user' in session:
         if request.method == 'POST':
             title = request.form.get('title')
             slug = request.form.get('slug')
@@ -160,10 +167,51 @@ def add():
         return redirect('/dashboard')
 
 
+@app.route('/login', methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        if 'user' in session:
+            return redirect('/dashboard')
+        else:
+            user_name = request.form.get('name')
+            user_password = request.form.get('password')
+            auth_user = Users.query.filter_by(username=user_name, password=user_password).first()
+            print(auth_user)
+
+            if auth_user:
+                session['user'] = user_name
+                return redirect('/dashboard')
+            else:
+                return render_template('login.html', params=params)
+    else:
+        return render_template('login.html', params=params)
+
+
+@app.route('/signup', methods=["GET", "POST"])
+def signup():
+    if request.method == "POST":
+        user_email = request.form.get('email')
+        user_name = request.form.get('name')
+        user_password = request.form.get('password')
+        curr_user = Users.query.filter_by(email=user_email, username=user_name).first()
+        print(curr_user)
+
+        if curr_user:
+            return render_template('signup.html', params=params)
+        else:
+            signup_user = Users(email=user_email, username=user_name, password=user_password, created_date=datetime.now())
+            db.session.add(signup_user)
+            db.session.commit()
+            session['user'] = user_name
+            return redirect('/dashboard')
+    else:
+        return render_template('signup.html', params=params)
+
+
 @app.route('/logout')
 def logout():
     session.pop('user')
-    return redirect('/dashboard')
+    return redirect('/')
 
 
 @app.route('/delete/<string:serialnum>', methods=["GET", "POST"])
