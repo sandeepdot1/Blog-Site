@@ -26,13 +26,13 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a aria-current="page" class="nav-link active" href="/">
+                            <a aria-current="page" class="nav-link active" href="/dashboard">
                                 Home
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/about">
-                                About
+                            <a class="nav-link" href="/add">
+                                Write
                             </a>
                         </li>
                         <li class="nav-item dropdown">
@@ -40,7 +40,7 @@
                                 Topics
                             </a>
                             <ul aria-labelledby="navbarDropdown" class="dropdown-menu">
-                                 <li>
+                                <li>
                                     <a class="dropdown-item" href="#">
                                         Data Structures And Algorithms
                                     </a>
@@ -65,15 +65,12 @@
                                         App Development
                                     </a>
                                 </li>
-                                <li>
-                                    <hr class="dropdown-divider"/>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="/add">
-                                        Write
-                                    </a>
-                                </li>
                             </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/about">
+                                About
+                            </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/contact">
@@ -88,7 +85,36 @@
                             </button>
                         </input>
                     </form>
-                    {% block extra %}  {% endblock %}
+                    {% block extra %}
+                        {% if 'user' in session %}
+                            <div class="mx-2">
+                                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                                    <li class="nav-item dropdown">
+                                        <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" id="navbarDropdown" role="button">
+                                            Hello {{session['user']}}
+                                        </a>
+                                        <ul aria-labelledby="navbarDropdown" class="dropdown-menu">
+                                            <li>
+                                                <a class="dropdown-item" href="/logout">
+                                                    Log Out
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+
+                        {% else %}
+                            <div class="mx-2">
+                                <a class="btn btn-outline-warning" href="/login">
+                                    Login
+                                </a>
+                                <a class="btn btn-outline-danger" href="/signup">
+                                    Sign Up
+                                </a>
+                            </div>
+                        {% endif %}
+                    {% endblock %}
                 </div>
             </div>
         </nav>
@@ -100,7 +126,7 @@
                 </a>
             </p>
             <p>
-                © {{params['current_year']}} {{params['blog_name']}} Inc. ·
+                © {{params['blog_name']}} Inc. {{params['current_year']}} ·
                 <a href="#">
                     Privacy
                 </a>
