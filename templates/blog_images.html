@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Display</title>
+    <style>
+        .image-container {
+            width: 100vw; /* Set your desired width */
+            height: 30vw; /* Set your desired height */
+            background-color: white; /* Padding color */
+            display: flex;
+            justify-content: center; /* Center the image horizontally */
+            align-items: center; /* Center the image vertically */
+            overflow: hidden; /* Hide any overflow */
+        }
+
+        img {
+            max-width: 100%; /* Make sure the image doesn't exceed the container width */
+            max-height: 100%; /* Make sure the image doesn't exceed the container height */
+            object-fit: cover; /* Resize the image to cover the container */
+        }
+    </style>
+</head>
+<body>
+    <h2>Image: {{ filename }}</h2>
+    <div class="image-container">
+        <img src="data:image/jpeg;base64,{{ image_data }}" alt="{{ filename }}">
+    </div>
+</body>
+</html>
+
