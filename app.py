@@ -1,8 +1,10 @@
-from flask import Flask, render_template, request, session, redirect
+from flask import Flask, render_template, request, session, redirect, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from werkzeug.utils import secure_filename
 import math
 import json
+import base64
 
 with open('config.json', 'r') as config:
     params = json.load(config)['Parameters']
@@ -32,7 +34,7 @@ class Contacts(db.Model):
     phone_num = db.Column(db.String(12), unique=False, nullable=False)
     type = db.Column(db.String(30), nullable=False)
     message = db.Column(db.String(120), nullable=False)
-    date = db.Column(db.String(12), nullable=True)
+    created_date = db.Column(db.String(12), nullable=True)
 
 
 class Blogs(db.Model):
@@ -45,7 +47,7 @@ class Blogs(db.Model):
     type = db.Column(db.String(30), nullable=False)
     content = db.Column(db.String(120), nullable=False)
     img_file = db.Column(db.String(25), nullable=False)
-    date = db.Column(db.String(12), nullable=True)
+    created_date = db.Column(db.String(12), nullable=True)
 
 class Users(db.Model):
     '''
@@ -57,6 +59,16 @@ class Users(db.Model):
     password = db.Column(db.String(200), nullable=False)  # Password as a string
     created_date = db.Column(db.String(12), nullable=True)
 
+
+# Image model with BLOB column for storing image binary data
+class Blogimages(db.Model):
+    '''
+    id, filename, binary_data, created_date
+    '''
+    id = db.Column(db.Integer, primary_key=True)
+    filename = db.Column(db.String(150), nullable=False)
+    binary_data = db.Column(db.LargeBinary, nullable=False)  # Stores image as binary
+    created_date = db.Column(db.String(12), nullable=True)
 
 
 @app.route("/", methods=["GET"])
@@ -97,7 +109,7 @@ def contact():
         tp = request.form.get('type')
         msg = request.form.get('message')
         '''Add entry to database'''
-        entry = Contacts(email=email, phone_num=phone, type=tp, message=msg, date=datetime.now())
+        entry = Contacts(email=email, phone_num=phone, type=tp, message=msg, created_date=datetime.now())
         db.session.add(entry)
         db.session.commit()
     return render_template('contact.html', params=params)
@@ -159,7 +171,7 @@ def add():
             content = request.form.get('content')
             img = request.form.get('img_file')
             date = datetime.now()
-            blog = Blogs(title=title, slug=slug, type=tp, content=content, img_file=img, date=date)
+            blog = Blogs(title=title, slug=slug, type=tp, content=content, img_file=img, created_date=date)
             db.session.add(blog)
             db.session.commit()
         return render_template('add.html',params=params)
@@ -221,6 +233,49 @@ def delete(serialnum):
         db.session.delete(blog)
         db.session.commit()
         return redirect('/dashboard')
+    
+
+# Route to handle file upload
+@app.route('/uploader', methods=["POST"])
+def upload_file():
+    print(request.files)
+    print(request.files['myfile'])
+
+    if 'myfile' not in request.files:
+        return jsonify({"error": "No file part"}), 400
+    
+    file = request.files['myfile']
+    
+    if file.filename == '':
+        return jsonify({"error": "No selected file"}), 400
+
+    # Secure the filename
+    file_name = secure_filename(file.filename)
+    
+    # Read file data in binary format
+    file_data = file.read()
+
+    # Save file to the database
+    new_image = Blogimages(filename = file_name, binary_data = file_data, created_date = datetime.now())
+    db.session.add(new_image)
+    db.session.commit()
+
+    return jsonify({"message": "File uploaded and stored in the database!", "filename": file_name}), 200
+
+
+# Route to retrieve image from database
+@app.route('/image/<int:image_id>', methods=["GET"])
+def get_image(image_id):
+    image = Blogimages.query.get(image_id)
+    if not image:
+        return jsonify({"error": "Image not found"}), 404
+
+    # Return image data as a base64-encoded string for display in the frontend
+    image_data = base64.b64encode(image.binary_data).decode('utf-8')
+    #return jsonify({"filename": image.filename, "image_data": image_data}), 200
+
+    return render_template('blog_images.html', filename=image.filename, image_data=image_data)
+
 
 
 if __name__ == "__main__":
