@@ -4,13 +4,9 @@
 {% block body %}
 
         <div class="container">
-            <h1>Actions</h1>
-            <a href="/dashboard"><button class="btn btn-primary">Dashboard</button></a>
-            <a href="/logout"><button class="btn btn-primary">Log Out</button></a>
-        <hr>
-            <h1>
-                Edit Blog
-            </h1>
+            <h2>
+                Edit This Blog
+            </h2>
             <form name="sentMessage" id="contactForm" action = "/edit/{{blog.sno}}" method="post" novalidate>
             <div class="control-group">
               <div class="form-group floating-label-form-group controls">
@@ -63,9 +59,11 @@
             </div>
             <div class="control-group">
               <div class="form-group floating-label-form-group controls">
-                <label>Image File</label>
-                <input type="text" class="form-control" placeholder="Your Blog Goes Here" name = "img_file" id="img_file" required data-validation-required-message="Please upload image" value="{{blog.img_file}}">
-                <p class="help-block text-danger"></p>
+                <label>Blog image (Allowed types: jpeg, jpg, png )</label>
+                <form action="/uploader" method="post" enctype="multipart/form-data" accept-charset="utf-8">
+                      <input type="file" name="myfile">
+                      <button class="btn btn-primary">Submit</button>
+                </form>
               </div>
             </div>
             <br>
