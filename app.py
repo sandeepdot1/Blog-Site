@@ -63,11 +63,11 @@ class Users(db.Model):
 # Image model with BLOB column for storing image binary data
 class Blogimages(db.Model):
     '''
-    id, filename, binary_data, created_date
+    id, filename, img_binary, created_date
     '''
     id = db.Column(db.Integer, primary_key=True)
     filename = db.Column(db.String(150), nullable=False)
-    binary_data = db.Column(db.LargeBinary, nullable=False)  # Stores image as binary
+    img_binary = db.Column(db.LargeBinary, nullable=False)  # Stores image as binary
     created_date = db.Column(db.String(12), nullable=True)
 
 
@@ -123,7 +123,7 @@ def layout():
 @app.route('/blog/<string:blog_slug>', methods=["GET"])
 def blog(blog_slug):
     new_blog = Blogs.query.filter_by(slug=blog_slug).first()
-    new_blog.date = new_blog.date.strftime('%Y-%m-%d')
+    new_blog.created_date = new_blog.created_date.strftime('%Y-%m-%d')
     return render_template('blog.html', params=params, blog=new_blog)
 
 
@@ -154,11 +154,18 @@ def edit(serialnum):
             blog.content = content
             blog.img_file = img
             blog.date = date
+
+            if blog.title is None or blog.slug is None or blog.type is None or blog.content is None or blog.img_file is None:
+                return redirect('/edit/' + serialnum)
+            
             db.session.commit()
             return redirect('/edit/' + serialnum)
-
+        
         blog = Blogs.query.filter_by(sno=serialnum).first()
         return render_template('edit.html', params=params, blog=blog)
+
+    else:
+        return redirect('/login')
 
 
 @app.route('/add',methods=["GET", "POST"])
@@ -171,12 +178,17 @@ def add():
             content = request.form.get('content')
             img = request.form.get('img_file')
             date = datetime.now()
+
+            if title is None or slug is None or tp is None or content is None or img is None:
+                return render_template('add.html',params=params)
+
             blog = Blogs(title=title, slug=slug, type=tp, content=content, img_file=img, created_date=date)
             db.session.add(blog)
             db.session.commit()
+
         return render_template('add.html',params=params)
     else:
-        return redirect('/dashboard')
+        return redirect('/login')
 
 
 @app.route('/login', methods=["GET", "POST"])
@@ -256,7 +268,7 @@ def upload_file():
     file_data = file.read()
 
     # Save file to the database
-    new_image = Blogimages(filename = file_name, binary_data = file_data, created_date = datetime.now())
+    new_image = Blogimages(filename = file_name, img_binary = file_data, created_date = datetime.now())
     db.session.add(new_image)
     db.session.commit()
 
@@ -271,7 +283,7 @@ def get_image(image_id):
         return jsonify({"error": "Image not found"}), 404
 
     # Return image data as a base64-encoded string for display in the frontend
-    image_data = base64.b64encode(image.binary_data).decode('utf-8')
+    image_data = base64.b64encode(image.img_binary).decode('utf-8')
     #return jsonify({"filename": image.filename, "image_data": image_data}), 200
 
     return render_template('blog_images.html', filename=image.filename, image_data=image_data)
