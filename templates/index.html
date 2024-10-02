@@ -86,9 +86,8 @@
 	                    </a>
 	                </p>
 	            </div>
-                {% set fname = 'images/' + blog.img_file %}
 	            <div class="col-auto d-none d-lg-block">
-	                <img alt="oops! plese check your network" class="bd-placeholder-img" height="250" src="{{url_for('static',filename=fname)}}" width="300">
+	                <img src="data:image/jpeg;base64,{{ blog.img_binary | decode_base64 }}" alt="{{ blog.img_file }}" class="bd-placeholder-img" height="250" width="300">
 	                </img>
 	            </div>
 	        </div>
