@@ -3,75 +3,74 @@
 
 {% block body %}
 
-        <div class="container">
-            <h2>
-                Edit This Blog
-            </h2>
-            <form name="sentMessage" id="contactForm" action = "/edit/{{blog.sno}}" method="post" novalidate>
-            <div class="control-group">
-              <div class="form-group floating-label-form-group controls">
-                <label>Title</label>
-                <input type="text" class="form-control" placeholder="Enter Title Of Blog" id="title" name="title" required data-validation-required-message="Please enter title" value="{{blog.title}}">
-                <p class="help-block text-danger"></p>
-              </div>
-            </div>
-            <div class="control-group">
-              <div class="form-group col-xs-12 floating-label-form-group controls">
-                <label>Slug</label>
-                <input type="text" class="form-control" placeholder="Enter Slug" name="slug" id="slug" required data-validation-required-message="Please enter title slug" value="{{blog.slug}}">
-                <p class="help-block text-danger"></p>
-              </div>
-            </div>
-            <div class="control-group">
-                <label class="form-group col-xs-12 floating-label-form-group controls" ,for="inputtype">
-                    Chose Your Topic
-                </label>
-                <div class="col-sm-10">
-                <select class="form-control", id="inputtype", name = "type">
-                    <option selected="" value="{{blog.type}}">
-                        Data Structures And Algorithms
-                    </option>
-                    <option>
-                        Web Development
-                    </option>
-                    <option>
-                        Artificial Intelligence
-                    </option>
-                    <option>
-                        Machine Learning
-                    </option>
-                    <option>
-                        App Development
-                    </option>
-                    <option>
-                        Cloud Computing
-                    </option>
-                </select>
-                <p class="help-block text-danger"></p>
-                </div>
-            </div>
-            <div class="control-group">
-              <div class="form-group floating-label-form-group controls">
-                <label>Write</label>
-                <textarea rows="5" class="form-control" placeholder="Your Blog Goes Here" name = "content" id="content" required data-validation-required-message="Please enter content">{{blog.content}}</textarea>
-                <p class="help-block text-danger"></p>
-              </div>
-            </div>
-            <div class="control-group">
-              <div class="form-group floating-label-form-group controls">
-                <label>Blog image (Allowed types: jpeg, jpg, png )</label>
-                <form action="/uploader" method="post" enctype="multipart/form-data" accept-charset="utf-8">
-                      <input type="file" name="myfile">
-                      <button class="btn btn-primary">Submit</button>
-                </form>
-              </div>
-            </div>
-            <br>
-            <div id="success"></div>
-            <div class="form-group">
-              <button type="submit" class="btn btn-primary" id="sendblog">Edit</button>
-            </div>
-          </form>
-        </div>
-       
+<div class="container">
+  <h2>
+    Edit This Blog
+  </h2>
+  <form name="sentMessage" id="contactForm" action="/edit/{{blog.sno}}" method="post" enctype="multipart/form-data" accept-charset="utf-8" novalidate>
+    <div class="control-group">
+      <div class="form-group floating-label-form-group controls">
+        <label>Title</label>
+        <input type="text" class="form-control" placeholder="Enter Title Of Blog" id="title" name="title" required
+          data-validation-required-message="Please enter title" value="{{blog.title}}">
+        <p class="help-block text-danger"></p>
+      </div>
+    </div>
+    <div class="control-group">
+      <div class="form-group col-xs-12 floating-label-form-group controls">
+        <label>Slug</label>
+        <input type="text" class="form-control" placeholder="Enter Slug" name="slug" id="slug" required
+          data-validation-required-message="Please enter title slug" value="{{blog.slug}}">
+        <p class="help-block text-danger"></p>
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="form-group col-xs-12 floating-label-form-group controls" ,for="inputtype">
+        Chose Your Topic
+      </label>
+      <div class="col-sm-10">
+        <select class="form-control" , id="inputtype" , name="type">
+          <option selected="" value="{{blog.type}}">
+            Data Structures And Algorithms
+          </option>
+          <option>
+            Web Development
+          </option>
+          <option>
+            Artificial Intelligence
+          </option>
+          <option>
+            Machine Learning
+          </option>
+          <option>
+            App Development
+          </option>
+          <option>
+            Cloud Computing
+          </option>
+        </select>
+        <p class="help-block text-danger"></p>
+      </div>
+    </div>
+    <div class="control-group">
+      <div class="form-group floating-label-form-group controls">
+        <label>Write</label>
+        <textarea rows="5" class="form-control" placeholder="Your Blog Goes Here" name="content" id="content" required
+          data-validation-required-message="Please enter content">{{blog.content}}</textarea>
+        <p class="help-block text-danger"></p>
+      </div>
+    </div>
+    <div class="control-group">
+      <div class="form-group floating-label-form-group controls">
+        <label>Blog image (Allowed types: jpeg, jpg, png )</label>
+        <input type="file" name="img_file">
+      </div>
+    </div>
+    <br>
+    <div class="form-group">
+      <button type="submit" class="btn btn-primary" id="sendblog">Edit</button>
+    </div>
+  </form>
+</div>
+
 {% endblock %}
