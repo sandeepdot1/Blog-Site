@@ -18,7 +18,6 @@ if local_server:
 
     # sesion name changed for testing
     app.config['SESSION_COOKIE_NAME'] = "session_details"
-
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = params['production_uri']
 
@@ -45,9 +44,12 @@ class Blogs(db.Model):
     title = db.Column(db.String(50), unique=False, nullable=False)
     slug = db.Column(db.String(30), nullable=False)
     type = db.Column(db.String(30), nullable=False)
-    content = db.Column(db.String(120), nullable=False)
-    img_file = db.Column(db.String(25), nullable=False)
+    content = db.Column(db.String(400), nullable=False)
+    img_file = db.Column(db.String(50), nullable=False)
+    img_binary = db.Column(db.LargeBinary, nullable=False)  # Stores image as binary
     created_date = db.Column(db.String(12), nullable=True)
+    modified_date = db.Column(db.String(12), nullable=True)
+
 
 class Users(db.Model):
     '''
@@ -60,15 +62,11 @@ class Users(db.Model):
     created_date = db.Column(db.String(12), nullable=True)
 
 
-# Image model with BLOB column for storing image binary data
-class Blogimages(db.Model):
-    '''
-    id, filename, img_binary, created_date
-    '''
-    id = db.Column(db.Integer, primary_key=True)
-    filename = db.Column(db.String(150), nullable=False)
-    img_binary = db.Column(db.LargeBinary, nullable=False)  # Stores image as binary
-    created_date = db.Column(db.String(12), nullable=True)
+def decode_base64(data, encoding = 'utf-8'):
+    return base64.b64encode(data).decode(encoding)
+
+# jinja filter to decode base64 binary image to show it in frontend
+app.jinja_env.filters['decode_base64'] = decode_base64
 
 
 @app.route("/", methods=["GET"])
@@ -122,9 +120,14 @@ def layout():
 
 @app.route('/blog/<string:blog_slug>', methods=["GET"])
 def blog(blog_slug):
-    new_blog = Blogs.query.filter_by(slug=blog_slug).first()
-    new_blog.created_date = new_blog.created_date.strftime('%Y-%m-%d')
-    return render_template('blog.html', params=params, blog=new_blog)
+    if 'user' in session:
+        blog = Blogs.query.filter_by(slug=blog_slug).first()
+        blog.created_date = blog.created_date.strftime('%d/%m/%Y %I:%M %p')
+
+        return render_template('blog.html', params=params, blog=blog, img_data=decode_base64(blog.img_binary), user_name=session['user'])
+    
+    else:
+        return redirect('/login')
 
 
 @app.route('/dashboard', methods=["GET", "POST"])
@@ -144,25 +147,35 @@ def edit(serialnum):
             slug = request.form.get('slug')
             tp = request.form.get('type')
             content = request.form.get('content')
-            img = request.form.get('img_file')
-            date = datetime.now()
 
             blog = Blogs.query.filter_by(sno=serialnum).first()
             blog.title = title
             blog.slug = slug
             blog.type = tp
             blog.content = content
-            blog.img_file = img
-            blog.date = date
 
-            if blog.title is None or blog.slug is None or blog.type is None or blog.content is None or blog.img_file is None:
+            if blog.title is None or blog.slug is None or blog.type is None or blog.content is None:
                 return redirect('/edit/' + serialnum)
             
+            if 'img_file' in request.files and request.files['img_file'].filename != '':
+                file = request.files['img_file']
+
+                # Secure the filename
+                file_name = secure_filename(file.filename)
+                
+                # Read file data in binary format
+                file_data = file.read()
+                
+                blog.img_file = file_name
+                blog.img_binary = file_data
+
+            blog.modified_date = datetime.now()        
             db.session.commit()
+
             return redirect('/edit/' + serialnum)
-        
-        blog = Blogs.query.filter_by(sno=serialnum).first()
-        return render_template('edit.html', params=params, blog=blog)
+        else:
+            blog = Blogs.query.filter_by(sno=serialnum).first()
+            return render_template('edit.html', params=params, blog=blog)
 
     else:
         return redirect('/login')
@@ -176,13 +189,27 @@ def add():
             slug = request.form.get('slug')
             tp = request.form.get('type')
             content = request.form.get('content')
-            img = request.form.get('img_file')
-            date = datetime.now()
 
-            if title is None or slug is None or tp is None or content is None or img is None:
+            if title is None or slug is None or tp is None or content is None:
+                return render_template('add.html',params=params)
+                        
+            if 'img_file' not in request.files:
+                return render_template('add.html',params=params)
+                        
+            file = request.files['img_file']
+            
+            if file.filename == '':
+                # return jsonify({"error": "No selected file"}), 400
                 return render_template('add.html',params=params)
 
-            blog = Blogs(title=title, slug=slug, type=tp, content=content, img_file=img, created_date=date)
+            # Secure the filename
+            file_name = secure_filename(file.filename)
+            
+            # Read file data in binary format
+            file_data = file.read()
+
+            # Save blog details to the database
+            blog = Blogs(title=title, slug=slug, type=tp, content=content, img_file=file_name, img_binary=file_data, created_date=datetime.now())
             db.session.add(blog)
             db.session.commit()
 
@@ -244,49 +271,21 @@ def delete(serialnum):
         blog = Blogs.query.filter_by(sno=serialnum).first()
         db.session.delete(blog)
         db.session.commit()
-        return redirect('/dashboard')
-    
 
-# Route to handle file upload
-@app.route('/uploader', methods=["POST"])
-def upload_file():
-    print(request.files)
-    print(request.files['myfile'])
-
-    if 'myfile' not in request.files:
-        return jsonify({"error": "No file part"}), 400
-    
-    file = request.files['myfile']
-    
-    if file.filename == '':
-        return jsonify({"error": "No selected file"}), 400
-
-    # Secure the filename
-    file_name = secure_filename(file.filename)
-    
-    # Read file data in binary format
-    file_data = file.read()
-
-    # Save file to the database
-    new_image = Blogimages(filename = file_name, img_binary = file_data, created_date = datetime.now())
-    db.session.add(new_image)
-    db.session.commit()
-
-    return jsonify({"message": "File uploaded and stored in the database!", "filename": file_name}), 200
+    return redirect('/dashboard')
 
 
+"""
+Below routes are test routes used for testing purposes
+"""    
 # Route to retrieve image from database
 @app.route('/image/<int:image_id>', methods=["GET"])
 def get_image(image_id):
-    image = Blogimages.query.get(image_id)
+    image = Blogs.query.get(image_id)
     if not image:
         return jsonify({"error": "Image not found"}), 404
 
-    # Return image data as a base64-encoded string for display in the frontend
-    image_data = base64.b64encode(image.img_binary).decode('utf-8')
-    #return jsonify({"filename": image.filename, "image_data": image_data}), 200
-
-    return render_template('blog_images.html', filename=image.filename, image_data=image_data)
+    return render_template('blog_images.html', filename=image.img_file, image_data=decode_base64(image.img_binary))
 
 
 
