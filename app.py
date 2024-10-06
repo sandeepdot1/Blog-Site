@@ -227,7 +227,6 @@ def login():
             user_name = request.form.get('name')
             user_password = request.form.get('password')
             auth_user = Users.query.filter_by(username=user_name, password=user_password).first()
-            print(auth_user)
 
             if auth_user:
                 session['user'] = user_name
@@ -245,7 +244,6 @@ def signup():
         user_name = request.form.get('name')
         user_password = request.form.get('password')
         curr_user = Users.query.filter_by(email=user_email, username=user_name).first()
-        print(curr_user)
 
         if curr_user:
             return render_template('signup.html', params=params)
@@ -290,4 +288,4 @@ def get_image(image_id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
