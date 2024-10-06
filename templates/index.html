@@ -1,17 +1,5 @@
 {% extends 'layout.html' %}
 
-{% block extra %}
-<div class="mx-2">
-    <a class="btn btn-outline-warning" href="/dashboard">
-        Login
-    </a>
-    <a class="btn btn-outline-danger" href="#">
-        Sign Up
-    </a>
-</div>
-{% endblock %}
-
-
 
 {% block body %}
 <!--carousal class /top-->
@@ -83,7 +71,7 @@
 	        <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-300 position-relative">
 	            <div class="col p-4 d-flex flex-column position-static">
 	                <strong class="d-inline-block mb-2 text-primary">
-	                    Data Structure And Algorithms
+	                    {{ blog.type }}
 	                </strong>
 	                <h3 class="mb-0">
 	                    {{blog.title}}
@@ -98,9 +86,8 @@
 	                    </a>
 	                </p>
 	            </div>
-                {% set fname = 'images/' + blog.img_file %}
 	            <div class="col-auto d-none d-lg-block">
-	                <img alt="oops! plese check your network" class="bd-placeholder-img" height="250" src="{{url_for('static',filename=fname)}}" width="300">
+	                <img src="data:image/jpeg;base64,{{ blog.img_binary | decode_base64 }}" alt="{{ blog.img_file }}" class="bd-placeholder-img" height="250" width="300">
 	                </img>
 	            </div>
 	        </div>

@@ -1,14 +1,5 @@
 {% extends 'layout.html' %}
 
-{% block extra %}
-<div class="mx-2">
-    <h6 class="text-light">
-        Hello {{params['admin_user']}}
-    </h6>
-</div>
-{% endblock %}
-
-
 
 {% block body %}
 <!--carousal class /top-->
@@ -75,16 +66,6 @@
     </a>
 </div>
 <div class="container my-4">
-	<h1>Actions</h1>
-	<a href="/add"><button class="btn btn-primary">&plus;New</button></a>
-	<a href="/logout"><button class="btn btn-primary">Log Out</button></a>
-	<hr>
-	<h1>Upload File</h1>
-	<form action="/uploader" method="post" accept-charset="utf-8">
-		<input type="file" name="myfile">
-			<button class="btn btn-primary">Submit</button>
-	</form>
-	<hr>
 	<h1>Your Blogs</h1>
     <table class="table">
         <thead>
@@ -96,7 +77,7 @@
                     Title
                 </th>
                 <th>
-                    Date
+                    Created Date
                 </th>
                 <th>
                     Edit
@@ -116,7 +97,7 @@
                     {{blog.title}}
                 </td>
                 <td>
-                    {{blog.date}}
+                    {{blog.created_date}}
                 </td>
                 <td>
                     <a href="/edit/{{blog.sno}}"><button class="btn btn-primary">Edit</button></a>

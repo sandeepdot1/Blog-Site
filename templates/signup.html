@@ -6,12 +6,16 @@
 </link>
 <body class="text-center">
     <link href="{{url_for('static', filename='css/signin.css')}}" rel="stylesheet">
-        <form action="/login" class="form-signin" method="post">
+        <form action="/signup" class="form-signin" method="post">
             {% set fname = 'images/'+  params['login_image']  %}
             <img alt="" class="mb-4" height="72" src="{{url_for('static', filename=fname)}}" width="72">
                 <h1 class="h3 mb-3 font-weight-normal">
-                    User Login
+                    User Sign Up
                 </h1>
+                <label class="sr-only" for="email">
+                    Email
+                </label>
+                <input autofocus="" class="form-control" id="email" name="email" placeholder="Email" required="" type="text">
                 <label class="sr-only" for="uname">
                     User Name
                 </label>
@@ -28,10 +32,10 @@
                             </label>
                         </div>
                         <button class="btn btn-lg btn-primary btn-block" type="submit">
-                            Sign in
+                            Sign Up
                         </button>
-                        <a class="btn btn-lg btn-primary btn-block" type="submit" href="/signup" role="button">
-                            New User.. Sign Up
+                        <a class="btn btn-lg btn-primary btn-block" type="submit" href="/login" role="button">
+                            Already a Member.. Login
                         </a>
                         <a class="btn btn-lg btn-primary btn-block" type="submit" href="/" role="button">
                             Home
