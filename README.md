@@ -66,8 +66,8 @@ Your Flask app should now be running at http://127.0.0.1:5000.
 
 To reset the database, run the following SQL commands:
 
-drop table blogs;
-drop table contacts;
-drop table users;
+DROP TABLE IF EXISTS blogs;
+DROP TABLE IF EXISTS contacts;
+DROP TABLE IF EXISTS users;
 
 Happy coding! 🚀
