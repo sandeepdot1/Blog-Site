@@ -65,7 +65,7 @@ Create a `config.json` file in the project root with the following structure (Sa
 If you don't have MySQL installed locally, you can run it using Docker:
 
 ```sh
-$ docker run --name mysql-container -e MYSQL_ROOT_PASSWORD=yourpassword -e MYSQL_DATABASE=yourdatabase -p 3306:3306 -d mysql:latest
+$ docker run --name mysql-container -e MYSQL_ROOT_PASSWORD=yourpassword -e MYSQL_DATABASE=yourdatabase -p 3306:3306 -d mysql:5.7
 ```
 
 ### 5. Initialize Database
