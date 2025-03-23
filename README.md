@@ -60,6 +60,31 @@ Create a `config.json` file in the project root with the following structure (Sa
 >
 > Ensure that `pymysql` is installed to use this format.
 
+> **Note:** If you are getting an issue during flask app run due to mysql like this,
+>
+> ```
+> line 31, in mysql_config
+>        raise OSError("{} not found".format(_mysql_config_path))
+>    OSError: mysql_config not found
+>    ----------------------------------------
+> ERROR: Command errored out with exit status 1: python setup.py egg_info Check the logs for full command output.
+> ```
+>
+> install the following libraries (for Ubuntu/Debian)
+>
+> ```
+> sudo apt update
+> sudo apt install libmysqlclient-dev
+> ```
+>
+> install the following libraries (for Mac)
+>
+> ```
+> brew install mysql-client
+> echo 'export PATH="/usr/local/opt/mysql-client/bin:$PATH"' >> ~/.bashrc
+> source ~/.bashrc
+> ```
+
 ### 4. Run MySQL Using Docker (Optional)
 
 If you don't have MySQL installed locally, you can run it using Docker:
