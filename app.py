@@ -265,7 +265,7 @@ def logout():
 
 @app.route('/delete/<string:serialnum>', methods=["GET", "POST"])
 def delete(serialnum):
-    if 'user' in session and session['user'] == params['admin_user']:
+    if 'user' in session:
         blog = Blogs.query.filter_by(sno=serialnum).first()
         db.session.delete(blog)
         db.session.commit()
