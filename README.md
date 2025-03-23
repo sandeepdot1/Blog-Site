@@ -1,6 +1,8 @@
-# Blog-Site
+# CodingBlog
 
 A Blog Site made using Flask and Python
+
+https://github.com/user-attachments/assets/85957040-0441-45d7-9b49-f0947a5a2167
 
 # Flask App Setup
 
@@ -42,6 +44,8 @@ Create a `config.json` file in the project root with the following structure (Sa
     "per_page": 5,
     "admin_user": "admin_username",
     "login_image": "login_image.png"
+    "blog_name": "CodingBlog",
+    "current_year": 2025
   }
 }
 ```
