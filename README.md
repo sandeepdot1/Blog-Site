@@ -1,6 +1,8 @@
-# Blog-Site
+# CodingBlog
 
 A Blog Site made using Flask and Python
+
+https://github.com/user-attachments/assets/85957040-0441-45d7-9b49-f0947a5a2167
 
 # Flask App Setup
 
@@ -42,6 +44,8 @@ Create a `config.json` file in the project root with the following structure (Sa
     "per_page": 5,
     "admin_user": "admin_username",
     "login_image": "login_image.png"
+    "blog_name": "CodingBlog",
+    "current_year": 2025
   }
 }
 ```
@@ -59,6 +63,31 @@ Create a `config.json` file in the project root with the following structure (Sa
 > ```
 >
 > Ensure that `pymysql` is installed to use this format.
+
+> **Note:** If you are getting an issue during flask app run due to mysql like this,
+>
+> ```
+> line 31, in mysql_config
+>        raise OSError("{} not found".format(_mysql_config_path))
+>    OSError: mysql_config not found
+>    ----------------------------------------
+> ERROR: Command errored out with exit status 1: python setup.py egg_info Check the logs for full command output.
+> ```
+>
+> install the following libraries (for Ubuntu/Debian)
+>
+> ```
+> sudo apt update
+> sudo apt install libmysqlclient-dev
+> ```
+>
+> install the following libraries (for Mac)
+>
+> ```
+> brew install mysql-client
+> echo 'export PATH="/usr/local/opt/mysql-client/bin:$PATH"' >> ~/.bashrc
+> source ~/.bashrc
+> ```
 
 ### 4. Run MySQL Using Docker (Optional)
 

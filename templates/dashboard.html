@@ -103,7 +103,9 @@
                     <a href="/edit/{{blog.sno}}"><button class="btn btn-primary">Edit</button></a>
                 </td>
                 <td>
-                    <a href="/delete/{{blog.sno}}"><button class="btn btn-primary">Delete</button></a>
+                    <a href="/delete/{{ blog.sno }}" onclick="return confirmDelete();">
+                        <button class="btn btn-danger">Delete</button>
+                    </a>
                 </td>
             </tr>
         {% endfor %}
@@ -111,11 +113,13 @@
     </table>
 </div>
 <div class="container my-4">
-    <button class="btn btn-primary float-left"  href="#">
-        ← Previous
-    </button>
-    <button class="btn btn-primary float-right me-md-2"  href="#">
-        Next →
-    </button>
+    <div class="d-flex justify-content-between">
+        <button class="btn btn-primary">
+            ← Previous
+        </button>
+        <button class="btn btn-primary">
+            Next →
+        </button>
+    </div>
 </div>
 {% endblock %}

@@ -93,14 +93,15 @@
 	        </div>
 	    </div>
     {% endfor %}
-    <div class="clearfix my-4">
-        <a class="btn btn-primary float-left" href="{{prev}}">
-            ←
-            Previous
-        </a>
-        <a class="btn btn-primary float-right me-md-2" href="{{next}}">
-            Next →
-        </a>
+    <div class="container my-4">
+        <div class="d-flex justify-content-between">
+            <button class="btn btn-primary" href="{{prev}}">
+                ← Previous
+            </button>
+            <button class="btn btn-primary" href="{{next}}">
+                Next →
+            </button>
+        </div>
     </div>
 </div>
 {% endblock %}
